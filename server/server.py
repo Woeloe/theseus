@@ -29,4 +29,4 @@ def update_highscore(level: int):
     raise NotImplementedError
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=3000)
