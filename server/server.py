@@ -1,5 +1,6 @@
 import os
 import json
+import random
 from pathlib import Path
 
 from flask import Flask, request, abort
@@ -20,7 +21,6 @@ def fetch_levels():
 
             if os.path.isfile(os.path.join("levels", path)):
                 count += 1
-        print(count)
         data = {
             "aantal_levels": count
         }
@@ -28,10 +28,8 @@ def fetch_levels():
 
 @app.route('/level/<int:level>')
 def fetch_level(level: int):
-    print(level)
     if request.method == 'GET':
         path = Path('levels/level' + str(level) + '.json')
-        print(path)
 
         if path.is_file():
             with open(path) as f:
@@ -45,7 +43,28 @@ def fetch_level(level: int):
 
 @app.route('/random_level')
 def fetch_random_level():
-    raise NotImplementedError
+    level = random.randint(1, fetch_levels().get("aantal_levels"))
+
+
+    path = Path('levels/level' + str(level) + '.json')
+    if path.is_file():
+        with open(path) as f:
+            data = json.load(f)
+
+    if "highscore" in data:
+        highscore = data.get("highscore")
+    else:
+        highscore = -1
+
+
+
+    data = {
+        "level": level,
+        "game": {},
+        "highscore": highscore
+    }
+
+    return data
 
 # ============================================================
 # ===== HIGHSCORE ROUTING ====================================
